@@ -1,29 +1,23 @@
 #!/usr/bin/env python3
 
-import argparse
 import feedparser
 from bs4 import BeautifulSoup
+from termcolor import colored
+
 
 URL = 'https://www.archlinux.org/feeds/news/'
 
-parser = argparse.ArgumentParser(description='Read ArchLinux news.')
-parser.add_argument('show', metavar='n', type=int, nargs='?',
-                    help='Show feed [n].')
 
 def main(args=None):
-    args = parser.parse_args(args)
 
-    n = 1
+    for entry in feedparser.parse(URL).entries[:3]:
+        print("=======================================================")
+        print(colored(BeautifulSoup(entry.title, "html.parser").get_text(), 'red'), end='   ')
+        print(colored(BeautifulSoup(entry.published, "html.parser").get_text(), 'cyan'))
+        print(colored(BeautifulSoup(entry.summary, "html.parser").get_text(), 'yellow'))
 
-    for entry in feedparser.parse(URL).entries:
-        if args.show:
-            if n == args.show:
-                print (BeautifulSoup(entry.summary_detail.value, "html.parser")
-                         .get_text())
-        else:
-            print ("[%d] %s" % (n, entry.title))
-  
-        n += 1
+
+
 
 if __name__ == '__main__':
     main()
